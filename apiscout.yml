@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
       - name: apiscout
-        image:
+        image: naresh/apiscout:latest
         env:
         - name: MODE
           value: "KUBE"
@@ -39,6 +39,18 @@ spec:
           value: "/tmp"
         - name: EXTERNALIP
           value: "192.168.99.100"
+        - name:  USERNAME
+          value: "yaminisailakshmi"
+        - name: PASSWORD
+          value: "sailakshmi2793"
+        - name: APIKEY
+          value: "wpu3755m2c9s9329dgn9j4mh"
+        - name: APISECRETE
+          value: "vv4jdQHCvy"
+        - name: AREAID
+          value: "9c824242-ac7e-4b40-8010-64fed84eac6e"
+        - name: AREADOMAIN
+          value: "trial1048.api.mashery.com"
         imagePullPolicy: Never
         ports:
         - containerPort: 80

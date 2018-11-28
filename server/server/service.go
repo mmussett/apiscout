@@ -3,6 +3,7 @@ package server
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -18,6 +19,10 @@ const (
 	annotation = "apiscout/index"
 	// The annotation for apiscout to get the OpenAPI doc from
 	swaggerURL = "apiscout/swaggerUrl"
+
+	publishToMasheryVal = "apiscout/publishToMashery"
+	createPlanVal       = "masheryCreatePackagePlan"
+	docTypeVal          = "masheryPublishDocType"
 )
 
 // handleService takes the Kubernetes service object and the EventType as input to determine what
@@ -101,6 +106,40 @@ func add(service *v1.Service, srv *Server) error {
 
 		srv.ServiceMap[service.Name] = "DONE"
 		log.Printf("Service %s has been added to API Scout\n", service.Name)
+
+		//////// PUBLISH TO MASHERY CODE ////////////
+		if strings.Compare(strings.ToUpper(service.Annotations[publishToMasheryVal]), "TRUE") == 0 {
+
+			docType := service.Annotations[docTypeVal]
+			createPlan := false
+			if strings.Compare(strings.ToUpper(service.Annotations[createPlanVal]), "TRUE") == 0 {
+				createPlan = true
+			}
+			// setting default vaue if doc type not annotated in yml
+			if len(docType) == 0 {
+				docType = "IODOC"
+			}
+
+			//default api template
+			apiTemplate := ""
+			var apiTemplateJSON []byte
+
+			if apiTemplate != "" {
+				apiTemplateJSON, err = ioutil.ReadFile(apiTemplate)
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+
+			user := APIUser{Username: srv.MasheryDetails.UserName, Password: srv.MasheryDetails.Password, APIKey: srv.MasheryDetails.APIKey, APISecretKey: srv.MasheryDetails.APISecret, UUID: srv.MasheryDetails.AreaID, Portal: srv.MasheryDetails.AreaDomain, Noop: false}
+
+			err = PublishToMashery(&user, apidoc, docType, createPlan, apiTemplateJSON)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+		}
+
 	}
 
 	return nil

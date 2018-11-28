@@ -50,10 +50,10 @@ build-all: clean-all build-site build-server build-docker ## Performs clean-all 
 #--- Run targets ---
 run-server: ## Builds the  in the server directory and runs it with default settings
 	cd server && go generate && GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ../dist/server *.go
-	MODE=LOCAL HUGODIR=$(CURRDIR)/webapp HUGOSTORE=$(CURRDIR)/webapp/content/apis SWAGGERSTORE=$(CURRDIR)/webapp/static/swaggerdocs EXTERNALIP=$(EXTIP) ./dist/server
+	MODE=LOCAL HUGODIR=$(CURRDIR)/webapp HUGOSTORE=$(CURRDIR)/webapp/content/apis SWAGGERSTORE=$(CURRDIR)/webapp/static/swaggerdocs EXTERNALIP=$(EXTIP) USERNAME=yaminisailakshmi PASSWORD=sailakshmi2793 APIKEY=wpu3755m2c9s9329dgn9j4mh APISECRETE=vv4jdQHCvy AREAID=9c824242-ac7e-4b40-8010-64fed84eac6e AREADOMAIN=trial1048.api.mashery.com ./dist/server
 
 run-docker: ## Runs a docker container with default settings
-	docker run -it --rm -p 80:80 -v $(HOME)/.kube:/root/.kube -v $(HOME)/.minikube:/home/$(USER)/.minikube -e MODE=LOCAL -e HUGODIR="/tmp" -e EXTERNALIP=$(EXTIP) -e HUGOCMD="sh -c \"cd /tmp && hugo\"" --name=apiscout $(DOCKERREPO)/apiscout:latest
+	docker run -it --rm -p 80:80 -v $(HOME)/.kube:/root/.kube -v $(HOME)/.minikube:/home/$(USER)/.minikube -e MODE=LOCAL -e HUGODIR="/tmp" -e EXTERNALIP=$(EXTIP) -e USERNAME=yaminisailakshmi -e PASSWORD=sailakshmi2793 -e APIKEY=wpu3755m2c9s9329dgn9j4mh -e APISECRETE=vv4jdQHCvy -e AREAID=9c824242-ac7e-4b40-8010-64fed84eac6e -e AREADOMAIN=trial1048.api.mashery.com -e HUGOCMD="sh -c \"cd /tmp && hugo\"" --name=apiscout $(DOCKERREPO)/apiscout:latest
 
 run-hugo: ## Runs the embedded Hugo server on port 1313
 	cd webapp && hugo server -D --disableFastRender
@@ -77,7 +77,7 @@ minikube-start: ## Start Minikube with default configuration
 	export MINIKUBE_HOME=$(HOME)
 	export CHANGE_MINIKUBE_NONE_USER=true
 	export KUBECONFIG=$(HOME)/.kube/config
-	sudo -E minikube start --vm-driver=none
+	sudo -E minikube start
 minikube-stop: ## Stop Minikube
 	minikube stop
 minikube-delete: minikube-stop ## Delete the Minikube installation
